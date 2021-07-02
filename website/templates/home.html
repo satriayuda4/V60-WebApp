@@ -19,12 +19,10 @@
   </div>
 </form>
 
-<h1>{{ weight_list }}</h1>
-
 <ul class="list-group list-group-flush" id="notes">
   {% for note in pouring %}
   <li class="list-group-item">
-    berat ke {{ note }}
+    Weight in scale {{ note }}
   </li>
   {% endfor %}
 </ul>
