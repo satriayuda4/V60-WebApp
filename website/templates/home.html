@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %}V60-Brewing Guidelines{% endblock %} {% block content
+%}
+<h1 align = "center">Brewing Guide</h1>
+<form method="POST">
+  <div class="form-group">
+    <label for="formGroupExampleInput">Input cofee weight</label>
+    <input type="text" name="formGroupWeightInput" class="form-control" id="formGroupWeightInput" placeholder="Input in grams" required>
+  </div>
+  <div class="form-group">
+    <label for="formGroupExampleInput">Input water ratio</label>
+    <input type="text" name="formGroupWaterInput" class="form-control" id="formGroupWaterInput" placeholder="1:Ratio" required>
+  </div>
+  <div class="form-group">
+    <label for="formGroupExampleInput">Input number of pour</label>
+    <input type="text" name="formGroupPourInput" class="form-control" id="formGroupPourInput" placeholder="Total pour" required> 
+  </div>
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Lets Brew!</button>
+  </div>
+</form>
+
+<h1>{{ weight_list }}</h1>
+
+<ul class="list-group list-group-flush" id="notes">
+  {% for note in pouring %}
+  <li class="list-group-item">
+    berat ke {{ note }}
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
