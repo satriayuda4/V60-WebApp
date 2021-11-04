@@ -1,5 +1,4 @@
 # Flask Web App Tutorial
-The program for the coffee enthusiast. 
 
 ## Setup & Installtion
 
