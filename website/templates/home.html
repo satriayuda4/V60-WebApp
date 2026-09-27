@@ -1,29 +1,185 @@
-{% extends "base.html" %} {% block title %}V60-Brewing Guidelines{% endblock %} {% block content
-%}
-<h1 align = "center">Brewing Guide</h1>
-<form method="POST">
-  <div class="form-group">
-    <label for="formGroupExampleInput">Input cofee weight</label>
-    <input type="text" name="formGroupWeightInput" class="form-control" id="formGroupWeightInput" placeholder="Input in grams" required>
-  </div>
-  <div class="form-group">
-    <label for="formGroupExampleInput">Input water ratio</label>
-    <input type="text" name="formGroupWaterInput" class="form-control" id="formGroupWaterInput" placeholder="1:Ratio" required>
-  </div>
-  <div class="form-group">
-    <label for="formGroupExampleInput">Input number of pour</label>
-    <input type="text" name="formGroupPourInput" class="form-control" id="formGroupPourInput" placeholder="Total pour" required> 
-  </div>
-  <div align="center">
-    <button type="submit" class="btn btn-primary">Lets Brew!</button>
-  </div>
-</form>
+{% extends "base.html" %}
+{% block title %}V60 Coffee Brewing Calculator{% endblock %}
 
-<ul class="list-group list-group-flush" id="notes">
-  {% for note in pouring %}
-  <li class="list-group-item">
-    Weight in scale {{ note }}
-  </li>
-  {% endfor %}
-</ul>
+{% block content %}
+<div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 mb-3 shadow-inner text-xl">
+      ☕
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-[#43302b] tracking-tight">
+      V60 Pour-Over Calculator
+    </h1>
+    <p class="mt-2 text-stone-600 text-sm sm:text-base max-w-md mx-auto">
+      Dial in your coffee-to-water ratio and pour sequence for a clean, balanced extraction.
+    </p>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-6 space-y-2">
+        {% for category, message in messages %}
+          <div class="p-4 rounded-xl text-sm font-medium {% if category == 'error' %}bg-rose-50 border border-rose-200 text-rose-800{% else %}bg-amber-50 border border-amber-200 text-amber-800{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Brewing Parameters Form Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-[#eaddd7] p-6 sm:p-8">
+    <h2 class="text-lg font-semibold text-[#43302b] mb-4 flex items-center gap-2">
+      <span>Brew Parameters</span>
+    </h2>
+
+    <form method="POST" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Coffee Weight Input -->
+        <div>
+          <label for="formGroupWeightInput" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">
+            Coffee Dose (g)
+          </label>
+          <div class="relative rounded-xl shadow-xs">
+            <input
+              type="number"
+              step="any"
+              name="formGroupWeightInput"
+              id="formGroupWeightInput"
+              value="{{ form_data.weight if form_data else '' }}"
+              placeholder="e.g. 15"
+              required
+              class="w-full rounded-xl border border-stone-300 px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#9d6848] focus:border-transparent text-sm transition"
+            />
+          </div>
+          <p class="mt-1 text-xs text-stone-500">Ground coffee weight</p>
+        </div>
+
+        <!-- Water Ratio Input -->
+        <div>
+          <label for="formGroupWaterInput" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">
+            Water Ratio (1:x)
+          </label>
+          <div class="relative rounded-xl shadow-xs">
+            <input
+              type="number"
+              step="any"
+              name="formGroupWaterInput"
+              id="formGroupWaterInput"
+              value="{{ form_data.water if form_data else '' }}"
+              placeholder="e.g. 15"
+              required
+              class="w-full rounded-xl border border-stone-300 px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#9d6848] focus:border-transparent text-sm transition"
+            />
+          </div>
+          <p class="mt-1 text-xs text-stone-500">e.g. 15 for 1:15 brew</p>
+        </div>
+
+        <!-- Number of Pours Input -->
+        <div>
+          <label for="formGroupPourInput" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">
+            Number of Pours
+          </label>
+          <div class="relative rounded-xl shadow-xs">
+            <input
+              type="number"
+              min="1"
+              max="12"
+              name="formGroupPourInput"
+              id="formGroupPourInput"
+              value="{{ form_data.pour if form_data else '' }}"
+              placeholder="e.g. 3"
+              required
+              class="w-full rounded-xl border border-stone-300 px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#9d6848] focus:border-transparent text-sm transition"
+            />
+          </div>
+          <p class="mt-1 text-xs text-stone-500">Total pours with bloom</p>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-center sm:justify-start">
+        <button
+          type="submit"
+          class="w-full sm:w-auto px-7 py-3 bg-[#7f5139] hover:bg-[#674332] active:scale-[0.99] text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition duration-150 flex items-center justify-center gap-2"
+        >
+          <span>Calculate Pour Sequence</span>
+          <span>☕</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Section -->
+  {% if pouring_steps %}
+    <div class="mt-8 space-y-6">
+      <!-- Brew Summary Metrics -->
+      <div>
+        <h3 class="text-base font-semibold text-[#43302b] mb-3">Brew Overview</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-white rounded-xl border border-[#ebd7cc] p-4 text-center shadow-xs">
+            <p class="text-xs uppercase tracking-wider font-medium text-stone-500">Coffee Dose</p>
+            <p class="text-xl font-bold text-[#43302b] mt-1">{{ summary.coffee_weight }}g</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[#ebd7cc] p-4 text-center shadow-xs">
+            <p class="text-xs uppercase tracking-wider font-medium text-stone-500">Total Water</p>
+            <p class="text-xl font-bold text-amber-700 mt-1">{{ summary.total_water }}g</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[#ebd7cc] p-4 text-center shadow-xs">
+            <p class="text-xs uppercase tracking-wider font-medium text-stone-500">Ratio</p>
+            <p class="text-xl font-bold text-[#43302b] mt-1">1:{{ summary.water_ratio }}</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[#ebd7cc] p-4 text-center shadow-xs">
+            <p class="text-xs uppercase tracking-wider font-medium text-stone-500">Water / Pour</p>
+            <p class="text-xl font-bold text-[#43302b] mt-1">~{{ summary.water_pour }}g</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Pour Cards -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-semibold text-[#43302b]">Step-by-Step Pour Guide</h3>
+          <span class="text-xs text-stone-500 font-medium">{{ summary.pour_count }} pours total</span>
+        </div>
+
+        <div class="space-y-3" id="notes">
+          {% for step in pouring_steps %}
+            <div class="bg-white rounded-xl border border-[#eaddd7] p-4 sm:p-5 flex items-center justify-between shadow-xs hover:border-[#b4825d] transition-colors">
+              <div class="flex items-center gap-3.5">
+                {% if step.is_bloom %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                    Bloom (Pour 1)
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
+                    Pour {{ step.step }}
+                  </span>
+                {% endif %}
+                <div>
+                  <p class="text-sm font-medium text-stone-800">
+                    Pour <span class="font-semibold text-stone-900">+{{ step.incremental }}g</span> water
+                  </p>
+                  <p class="text-xs text-stone-500">
+                    {% if step.is_bloom %}
+                      Saturate grounds evenly and wait ~45s
+                    {% else %}
+                      Pour in gentle outward spirals
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+
+              <div class="text-right">
+                <span class="block text-xs uppercase tracking-wider text-stone-500 font-medium">Scale Target</span>
+                <span class="text-lg sm:text-xl font-extrabold text-[#43302b]">{{ step.target_weight }}g</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

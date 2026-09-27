@@ -16,9 +16,39 @@
     />
 
     <title>{% block title %}Home{% endblock %}</title>
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        corePlugins: {
+          preflight: false, // Preserves Bootstrap navbar & default styling
+        },
+        theme: {
+          extend: {
+            colors: {
+              coffee: {
+                50: '#fdf8f6',
+                100: '#f4eae5',
+                200: '#ebd7cc',
+                300: '#dbbea8',
+                400: '#c59e7e',
+                500: '#b4825d',
+                600: '#9d6848',
+                700: '#7f5139',
+                800: '#674332',
+                900: '#54372c',
+                950: '#2d1b15',
+              }
+            }
+          }
+        }
+      }
+    </script>
   </head>
-  <body>
+  <body class="bg-[#faf7f2] min-h-screen text-stone-800">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand font-weight-bold" href="/">☕ V60 Brewer</a>
       <button
         class="navbar-toggler"
         type="button"
